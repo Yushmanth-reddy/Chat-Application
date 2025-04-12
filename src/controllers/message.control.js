@@ -1,4 +1,5 @@
 import cloudinary from "../lib/cloudinary.js";
+import { getRecieverSocketId, io } from "../lib/socket.js";
 import Message from "../models/message.model.js";
 import User from "../models/user.model.js";
 
@@ -45,7 +46,7 @@ export const sendMessage = async (req, res) => {
     let imageURL;
     if (image) {
       const uploadResponse = await cloudinary.uploader.upload(image);
-      const imageURL = uploadResponse.secure_url;
+      imageURL = uploadResponse.secure_url;
     }
 
     const newMessage = new Message({
@@ -57,8 +58,12 @@ export const sendMessage = async (req, res) => {
 
     await newMessage.save();
     // implement socket.io
+    const recieverSocketId = getRecieverSocketId(userToChatId);
+    if (recieverSocketId) {
+      io.to(recieverSocketId).emit("newMessage", newMessage);
+    }
 
-    req.status(200).json(newMessage);
+    res.status(200).json(newMessage);
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ message: "Internal server Error" });

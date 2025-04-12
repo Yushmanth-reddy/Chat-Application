@@ -5,9 +5,9 @@ import messageRouter from "./routes/message.route.js";
 import cors from "cors";
 import { dbconnect } from "./lib/db.js";
 import cookieParser from "cookie-parser";
+import { app, server } from "./lib/socket.js";
 
 dotenv.config();
-const app = express();
 
 const PORT = process.env.PORT;
 app.use(express.json({ limit: "10mb" })); // increase limit as needed
@@ -23,7 +23,7 @@ app.use(
 app.use("/api/auth", authRouter);
 app.use("/api/message", messageRouter);
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`listening to port ${PORT}`);
   dbconnect();
 });
