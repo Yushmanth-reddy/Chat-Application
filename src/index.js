@@ -15,7 +15,7 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "https://chat-app-frontend-kappa-murex.vercel.app",
+    origin: "*",
     credentials: true,
   })
 );
